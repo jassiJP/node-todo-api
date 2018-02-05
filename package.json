@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    //start script is needed for node to work correctly on HEROKU
+    "start": "node server/server.js",
     "test": "mocha server/**/*.test.js",
     "test-watch": "nodemon --exec \"npm test\""
+  },
+  "engines": {
+    "node": "8.9.3"
   },
   "keywords": [],
   "author": "",
