@@ -17,7 +17,7 @@ app.post('/todos', (req, res) => {
     todo.save().then((doc) => {
         res.send(doc);
     }, (err) => {
-        console.log('Unable to save Todo \n', err);
+        //console.log('Unable to save Todo \n', err);
         res.status(400).send(err);
     });
 });
