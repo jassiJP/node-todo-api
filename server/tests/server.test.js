@@ -1,3 +1,5 @@
+const {ObjectID} = require('mongodb');
+
 const expect = require('expect');
 const request = require('supertest');
 
@@ -7,9 +9,11 @@ const {Todo} = require('../models/todo.model');
 // testing lifecyle hook: this will run before any test case
 // we are removing all the docs from a collection Todos
 
-const todos = [{
+var todos = [{
+    _id: new ObjectID(),
     text: 'first todo test'
 }, {
+    _id: new ObjectID(),
     text: 'first todo test1'
 }];
 
@@ -71,5 +75,38 @@ describe('GET /todos', () => {
             })
             .end(done);
     });
+
+    describe('GET /todos/:id', () => {
+        it('should fetch Todo by id', (done) => {
+            var id = todos[0]._id.toHexString();
+            request(app)
+                .get(`/todos/${id}`)
+                .expect(200)
+                .expect((res) => {             
+                    expect(res.body.todo.text).toBe(todos[0].text);
+                })
+                .end(done);
+        });
+
+        it('should return 404 if ID is not valid', (done) => {
+
+            var id = '123ljh';
+
+            request(app)
+                .get(`/todos/${id}`)
+                .expect(404)
+                .end(done);
+        });
+
+        it('should return 404 if ID does not exist', (done) => {
+            var id = new ObjectID().toHexString();
+
+            request(app)
+                .get(`/todos/${id}`)
+                .expect(404)
+                .end(done);
+        });
+    });
+
 });
 
