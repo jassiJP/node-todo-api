@@ -148,3 +148,65 @@ describe('DELETE /todos/:id', () => {
     });
 });
 
+describe('PATCH /todos/:id', () => {
+    it('should update todo by ID:completed:true and fill completedAt', (done) => {
+        var id = todos[0]._id.toHexString();
+        var body = {
+            text: 'test update by id set completed true',
+            completed: true
+        };
+
+        request(app)
+            .patch(`/todos/${id}`)
+            .send(body)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(body.text);
+                expect(res.body.todo.completed).toBe(body.completed);
+                expect(res.body.todo.completedAt).toBeA('number');
+            })
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                Todo.findById(id).then((todo) => {
+                    expect(todo.text).toBeTruthy();
+                    expect(todo.completed).toBeTruthy();
+                    expect(todo.completedAt).toBeA('number');
+                    done();
+                }, (err) => done(err));
+            });
+    });
+
+    it('should update todo by id: completed:false and fill completedAt with null', (done) => {
+        var id = todos[0]._id.toHexString();
+        var body = {
+            text: 'test update by id set completed false',
+            completed: false
+        };
+
+        request(app)
+            .patch(`/todos/${id}`)
+            .send(body)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.complete).toBeFalsy();
+                expect(res.body.todo.completedAt).toBeFalsy();
+                expect(res.body.todo.text).toBe(body.text);
+            })
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                Todo.findById(id).then((todo) => {
+                    expect(todo.completed).toBeFalsy();
+                    expect(todo.completedAt).toBeFalsy();
+                    expect(todo.text).toBe(body.text);
+                    done();
+                }).catch((err) => done(err));
+            });
+    });
+});
+
