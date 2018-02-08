@@ -1,4 +1,7 @@
 var {User} = require('../models/user.model');
+const _ = require('lodash');
+//const bcrypt = require('bcryptjs');
+//const jwt = require('jsonwebtoken');
 
 var authenticate = (req, res, next) => {
     var token = req.header('x-auth');
