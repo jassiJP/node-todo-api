@@ -58,6 +58,16 @@ UserSchema.methods.generateAuthToken = function() {
     });
 };
 
+UserSchema.methods.removeToken = function(token) {
+    var user = this;
+
+    return user.update({
+        $pull: {
+            tokens: {token}
+        }
+    });
+};
+
 //we use statics to make this function availabel on model itself
 UserSchema.statics.findByToken = function(token) {
     var User = this; //Model
@@ -66,9 +76,6 @@ UserSchema.statics.findByToken = function(token) {
     try {
         decoded = jwt.verify(token, 'abc123');
     } catch(err) {
-        // return new Promise((resolve, reject) => {
-        //     reject();
-        // });
         return Promise.reject();
     }   
 
